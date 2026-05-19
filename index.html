@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Fixture Oficial - FIFA World Cup 2026</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --primary-accent: #3b82f6;
+            --success-accent: #10b981;
+            --warning-accent: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Top Bar & Countdown */
+        .top-header {
+            width: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #0f172a);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Cabecera exclusiva para Impresión (Oculta en web) */
+        .print-header {
+            display: none;
+        }
+
+        .countdown-container {
+            display: inline-flex;
+            gap: 15px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .countdown-item {
+            color: #38bdf8;
+        }
+
+        /* Layout global */
+        .main-content {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 30px 0 15px 0;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .row-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 5px 0;
+        }
+
+        /* Tarjetas de Grupos */
+        .group-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 135px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+        .group-card:hover { transform: translateY(-2px); }
+
+        .group-header {
+            background: #1e293b;
+            text-align: center;
+            font-weight: 700;
+            padding: 8px;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: #38bdf8;
+        }
+
+        .team-row {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            transition: background 0.2s;
+        }
+        .team-row:hover { background: rgba(255,255,255,0.05); }
+        
+        .team-row.selected-1st {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success-accent);
+            font-weight: bold;
+        }
+        .team-row.selected-2nd {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning-accent);
+            font-weight: bold;
+        }
+
+        .badge-pos {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+        .selected-1st .badge-pos { color: var(--success-accent); }
+        .selected-2nd .badge-pos { color: var(--warning-accent); }
+
+        /* Tarjetas de Partido (Mano a Mano) */
+        .match-card-vs {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 135px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .match-date-header {
+            background: rgba(15, 23, 42, 0.4);
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .slot-team {
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            min-height: 15px;
+        }
+        .slot-team:not(.empty):hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+        }
+        .slot-team.selected {
+            background: var(--primary-accent) !important;
+            color: white !important;
+        }
+        .slot-team.empty {
+            color: #475569;
+            font-weight: normal;
+            cursor: default;
+        }
+
+        .vs-divider {
+            background: rgba(15, 23, 42, 0.2);
+            color: #475569;
+            font-size: 9px;
+            text-align: center;
+            font-weight: bold;
+            padding: 3px 0;
+            border-top: 1px dashed var(--border-color);
+            border-bottom: 1px dashed var(--border-color);
+            letter-spacing: 2px;
+        }
+
+        /* Botones e instrucciones */
+        .panel-instrucciones {
+            background: var(--bg-card);
+            border-left: 4px solid var(--primary-accent);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .actions-panel {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding-bottom: 60px;
+        }
+
+        .btn {
+            background: #1e293b;
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 12px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #273549;
+            border-color: #475569;
+        }
+        .btn-share {
+            background: var(--primary-accent);
+            border: none;
+        }
+        .btn-share:hover { background: #1d4ed8; }
+
+        .campeon-destacado {
+            border: 2px solid var(--success-accent) !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+            width: 160px;
+        }
+
+        /* =========================================================
+           REDUCCIÓN Y COMPRESIÓN ULTRA ESTRICTA PARA UN SOLO FOLIO
+           ========================================================= */
+        @page {
+            size: A4 portrait;
+            margin: 5mm 5mm; /* Margen hiper-reducido para evitar desbordes */
+        }
+
+        @media print {
+            .panel-instrucciones, .actions-panel, .top-header { 
+                display: none !important; 
+            }
+
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 10px;
+                border-bottom: 1.5px solid #000000;
+                padding-bottom: 3px;
+                width: 100%;
+            }
+            .print-header h1 {
+                margin: 0 0 2px 0;
+                font-size: 18px;
+                font-weight: 800;
+                color: #000000;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            .print-header p {
+                margin: 0;
+                font-size: 10px;
+                color: #333333;
+                font-weight: 600;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            .main-content {
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            
+            /* Compresión de títulos de sección */
+            .section-title {
+                font-size: 11px !important;
+                margin: 8px 0 4px 0 !important;
+                color: #000000 !important;
+            }
+            .section-title::after {
+                background: #000000 !important;
+            }
+            .row-container {
+                gap: 5px !important; /* Separación mínima */
+                padding: 1px 0 !important;
+            }
+
+            /* Reducción extrema de anchos para asegurar unificación horizontal */
+            .group-card { 
+                width: 92px !important; 
+            }
+            .match-card-vs { 
+                width: 98px !important; 
+            }
+            
+            .group-header, .match-date-header {
+                background: #e2e8f0 !important;
+                color: #000000 !important;
+                border-bottom: 1px solid #000000 !important;
+                font-size: 8.5px !important;
+                padding: 2px !important;
+            }
+            
+            .team-row {
+                padding: 3px 5px !important;
+                font-size: 8.5px !important;
+                border-bottom: 1px solid #cbd5e1 !important;
+                color: #000000 !important;
+            }
+            .team-row.selected-1st { background: #d5ebd1 !important; font-weight: bold !important; }
+            .team-row.selected-2nd { background: #fff2cc !important; font-weight: bold !important; }
+            .badge-pos { display: none !important; } /* Ocultar para ganar espacio de texto */
+
+            .slot-team {
+                padding: 3px !important;
+                font-size: 8.5px !important;
+                min-height: 11px !important;
+                color: #000000 !important;
+            }
+            .slot-team.selected {
+                background: #cbd5e1 !important;
+                font-weight: bold !important;
+            }
+            .slot-team.empty {
+                color: #94a3b8 !important;
+            }
+            .vs-divider {
+                color: #64748b !important;
+                border-top: 1px dashed #000000 !important;
+                border-bottom: 1px dashed #000000 !important;
+                padding: 1px 0 !important;
+                font-size: 7.5px !important;
+                letter-spacing: 1px !important;
+            }
+            .campeon-destacado {
+                border: 2px solid #000000 !important;
+                width: 120px !important;
+            }
+            #campeon-box {
+                font-size: 11px !important;
+                font-weight: bold !important;
+                padding: 8px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-header">
+        <h1>FIFA World Cup 2026 Simulator</h1>
+        <p id="print-date-el">Predicción realizada el: --/--/---- --:--</p>
+    </div>
+
+    <div class="top-header">
+        <h1>FIFA World Cup 2026 Simulator</h1>
+        <div class="countdown-container" id="countdown-box">
+            Faltan: 
+            <span class="countdown-item" id="cd-days">00</span>d 
+            <span class="countdown-item" id="cd-hours">00</span>h 
+            <span class="countdown-item" id="cd-mins">00</span>m 
+            <span class="countdown-item" id="cd-secs">00</span>s
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="panel-instrucciones">
+            <strong>Cómo simular tu fixture:</strong><br>
+            • En la <strong>Fase de Grupos</strong> selecciona tus 2 favoritos de cada grupo (el primero quedará como 1° y el segundo como 2°).<br>
+            • Haz clic sobre el escudo/nombre del equipo que creas que ganará cada duelo eliminatorio para avanzar al cuadro final.<br>
+            • Usa <strong>Compartir Fixture</strong> para guardar tus predicciones en un enlace único.
+        </div>
+
+        <div class="section-title">Fase de Grupos</div>
+        <div class="row-container" id="grupos-container"></div>
+
+        <div class="section-title">Round of 16 (Octavos de Final)</div>
+        <div class="row-container" id="r16-container">
+            <div class="match-card-vs" data-next-match="q0" data-slot="0">
+                <div class="match-date-header">28 Jun - Los Ángeles</div>
+                <div class="slot-team empty" id="slot-r16-A1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-B2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q0" data-slot="1">
+                <div class="match-date-header">29 Jun - Boston</div>
+                <div class="slot-team empty" id="slot-r16-C1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-D2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q1" data-slot="0">
+                <div class="match-date-header">30 Jun - Nueva York</div>
+                <div class="slot-team empty" id="slot-r16-E1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-F2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q1" data-slot="1">
+                <div class="match-date-header">1 Jul - Atlanta</div>
+                <div class="slot-team empty" id="slot-r16-G1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-H2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q2" data-slot="0">
+                <div class="match-date-header">2 Jul - Toronto</div>
+                <div class="slot-team empty" id="slot-r16-B1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-A2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q2" data-slot="1">
+                <div class="match-date-header">2 Jul - Los Ángeles</div>
+                <div class="slot-team empty" id="slot-r16-D1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-C2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q3" data-slot="0">
+                <div class="match-date-header">3 Jul - Miami</div>
+                <div class="slot-team empty" id="slot-r16-F1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-E2">-</div>
+            </div>
+            <div class="match-card-vs" data-next-match="q3" data-slot="1">
+                <div class="match-date-header">3 Jul - Dallas</div>
+                <div class="slot-team empty" id="slot-r16-H1">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" id="slot-r16-G2">-</div>
+            </div>
+        </div>
+
+        <div class="section-title">Quarter-Finals (Cuartos de Final)</div>
+        <div class="row-container" id="quarter-container">
+            <div class="match-card-vs" id="q0" data-next-match="s0" data-slot="0">
+                <div class="match-date-header">9 Jul - Boston</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+            </div>
+            <div class="match-card-vs" id="q1" data-next-match="s0" data-slot="1">
+                <div class="match-date-header">10 Jul - Los Ángeles</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+            </div>
+            <div class="match-card-vs" id="q2" data-next-match="s1" data-slot="0">
+                <div class="match-date-header">11 Jul - Miami</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+            </div>
+            <div class="match-card-vs" id="q3" data-next-match="s1" data-slot="1">
+                <div class="match-date-header">11 Jul - Kansas City</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="promover(this)">-</div>
+            </div>
+        </div>
+
+        <div class="section-title">Semi-Finals (Semifinales)</div>
+        <div class="row-container" id="semi-container">
+            <div class="match-card-vs" id="s0">
+                <div class="match-date-header">14 Jul - Dallas</div>
+                <div class="slot-team empty" onclick="promoverSemi(this)">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="promoverSemi(this)">-</div>
+            </div>
+            <div class="match-card-vs" id="s1">
+                <div class="match-date-header">15 Jul - Atlanta</div>
+                <div class="slot-team empty" onclick="promoverSemi(this)">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="promoverSemi(this)">-</div>
+            </div>
+        </div>
+
+        <div class="section-title">Final y Tercer Puesto</div>
+        <div class="row-container">
+            <div class="match-card-vs" id="f-tercer">
+                <div class="match-date-header">18 Jul - Miami (3° Puesto)</div>
+                <div class="slot-team empty" onclick="definirPodio(this, '3ro')">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="definirPodio(this, '3ro')">-</div>
+            </div>
+            <div class="match-card-vs" id="f-final">
+                <div class="match-date-header">19 Jul - Nueva York (Final)</div>
+                <div class="slot-team empty" onclick="definirPodio(this, 'campeon')">-</div>
+                <div class="vs-divider">VS</div>
+                <div class="slot-team empty" onclick="definirPodio(this, 'campeon')">-</div>
+            </div>
+        </div>
+
+        <div class="section-title">Winner / Campeón del Mundo</div>
+        <div class="row-container">
+            <div class="match-card-vs campeon-destacado">
+                <div class="match-date-header" style="background: rgba(16,185,129,0.2); color: #000000; font-weight: bold;">WORLD CHAMPION 2026</div>
+                <div class="slot-team empty" id="campeon-box" style="padding: 18px; font-size: 15px; color: #10b981;">-</div>
+            </div>
+        </div>
+
+        <div class="actions-panel">
+            <button class="btn" onclick="ejecutarImpresion()">🖨️ Imprimir / Guardar PDF</button>
+            <button class="btn btn-share" onclick="compartirPrediccion()">🔗 Compartir Fixture</button>
+        </div>
+    </div>
+
+<script>
+    const estructuraGrupos = {
+        'A': ['Estados Unidos', 'México', 'Canadá', 'Jamaica'],
+        'B': ['Argentina', 'Uruguay', 'Ecuador', 'Chile'],
+        'C': ['España', 'Alemania', 'Japón', 'Marruecos'],
+        'D': ['Francia', 'Inglaterra', 'Italia', 'Corea Sur'],
+        'E': ['Brasil', 'Colombia', 'Portugal', 'Bélgica'],
+        'F': ['Países Bajos', 'Croacia', 'Senegal', 'Australia'],
+        'G': ['Egipto', 'Argelia', 'Arabia Saudí', 'Irán'],
+        'H': ['Nigeria', 'Camerún', 'Ghana', 'Túnez']
+    };
+
+    const clasificadosPorGrupo = { 'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [] };
+
+    const contenedorGrupos = document.getElementById('grupos-container');
+    ['A','B','C','D','E','F','G','H'].forEach(letra => {
+        const card = document.createElement('div');
+        card.className = 'group-card';
+        card.innerHTML = `<div class="group-header">Grupo ${letra}</div>`;
+        
+        estructuraGrupos[letra].forEach(equipo => {
+            const row = document.createElement('div');
+            row.className = 'team-row';
+            row.setAttribute('data-grupo', letra);
+            row.setAttribute('data-equipo', equipo);
+            row.innerHTML = `<span>${equipo}</span><span class="badge-pos">-</span>`;
+            row.onclick = () => manejarSeleccionGrupo(row, letra, equipo);
+            card.appendChild(row);
+        });
+        contenedorGrupos.appendChild(card);
+    });
+
+    function manejarSeleccionGrupo(fila, letra, equipo) {
+        let lista = clasificadosPorGrupo[letra];
+
+        if (lista.includes(equipo)) {
+            lista.splice(lista.indexOf(equipo), 1);
+            fila.classList.remove('selected-1st', 'selected-2nd');
+            fila.querySelector('.badge-pos').innerText = '-';
+        } else {
+            if (lista.length >= 2) {
+                alert(`Ya seleccionaste los 2 clasificados del Grupo ${letra}.`);
+                return;
+            }
+            lista.push(equipo);
+        }
+
+        const filasDelGrupo = document.querySelectorAll(`.team-row[data-grupo="${letra}"]`);
+        filasDelGrupo.forEach(f => {
+            const eq = f.getAttribute('data-equipo');
+            f.classList.remove('selected-1st', 'selected-2nd');
+            f.querySelector('.badge-pos').innerText = '-';
+            
+            if (lista[0] === eq) {
+                f.classList.add('selected-1st');
+                f.querySelector('.badge-pos').innerText = '1°';
+            } else if (lista[1] === eq) {
+                f.classList.add('selected-2nd');
+                f.querySelector('.badge-pos').innerText = '2°';
+            }
+        });
+
+        actualizarNodosOctavos(letra);
+    }
+
+    function actualizarNodosOctavos(letra) {
+        const lista = clasificadosPorGrupo[letra];
+        const slot1 = document.getElementById(`slot-r16-${letra}1`);
+        const slot2 = document.getElementById(`slot-r16-${letra}2`);
+
+        if (slot1) {
+            const antiguo1 = slot1.innerText;
+            slot1.innerText = lista[0] ? lista[0] : '-';
+            if (lista[0]) slot1.classList.remove('empty'); else slot1.classList.add('empty');
+            if (antiguo1 !== slot1.innerText) limpiarCadenaProgreso(antiguo1);
+        }
+        if (slot2) {
+            const antiguo2 = slot2.innerText;
+            slot2.innerText = lista[1] ? lista[1] : '-';
+            if (lista[1]) slot2.classList.remove('empty'); else slot2.classList.add('empty');
+            if (antiguo2 !== slot2.innerText) limpiarCadenaProgreso(antiguo2);
+        }
+    }
+
+    document.querySelectorAll('#r16-container .slot-team').forEach(slot => {
+        slot.onclick = function() {
+            const equipo = this.innerText;
+            if (equipo === '-' || this.classList.contains('empty')) return;
+
+            const tarjetaPadre = this.parentElement;
+            const idSiguienteTarjeta = tarjetaPadre.getAttribute('data-next-match');
+            const posicionSlot = parseInt(tarjetaPadre.getAttribute('data-slot'));
+
+            Array.from(tarjetaPadre.querySelectorAll('.slot-team')).forEach(s => s.classList.remove('selected'));
+            this.classList.add('selected');
+
+            const proximaTarjeta = document.getElementById(idSiguienteTarjeta);
+            const slotsSiguientes = proximaTarjeta.querySelectorAll('.slot-team');
+            
+            const antiguoEnSlot = slotsSiguientes[posicionSlot].innerText;
+            slotsSiguientes[posicionSlot].innerText = equipo;
+            slotsSiguientes[posicionSlot].classList.remove('empty');
+
+            if(antiguoEnSlot !== equipo && antiguoEnSlot !== '-') {
+                limpiarCadenaProgreso(antiguoEnSlot);
+            }
+        };
+    });
+
+    function promover(elemento) {
+        const equipo = elemento.innerText;
+        if (equipo === '-') return;
+
+        const tarjetaPadre = elemento.parentElement;
+        const idSiguienteTarjeta = tarjetaPadre.getAttribute('data-next-match');
+        const posicionSlot = parseInt(tarjetaPadre.getAttribute('data-slot'));
+
+        Array.from(tarjetaPadre.querySelectorAll('.slot-team')).forEach(s => s.classList.remove('selected'));
+        elemento.classList.add('selected');
+
+        const proximaTarjeta = document.getElementById(idSiguienteTarjeta);
+        const slotsSiguientes = proximaTarjeta.querySelectorAll('.slot-team');
+        
+        const antiguoEnSlot = slotsSiguientes[posicionSlot].innerText;
+        slotsSiguientes[posicionSlot].innerText = equipo;
+        slotsSiguientes[posicionSlot].classList.remove('empty');
+
+        if(antiguoEnSlot !== equipo && antiguoEnSlot !== '-') {
+            limpiarCadenaProgreso(antiguoEnSlot);
+        }
+    }
+
+    function promoverSemi(elemento) {
+        const equipo = elemento.innerText;
+        if (equipo === '-') return;
+
+        const tarjetaPadre = elemento.parentElement;
+        const hermanos = Array.from(tarjetaPadre.querySelectorAll('.slot-team'));
+        const elOtroSlot = hermanos.find(s => s !== elemento);
+        const equipoPerdedor = elOtroSlot.innerText;
+
+        hermanos.forEach(s => s.classList.remove('selected'));
+        elemento.classList.add('selected');
+
+        const slotIndex = (tarjetaPadre.id === 's0') ? 0 : 1;
+
+        const slotsFinal = document.getElementById('f-final').querySelectorAll('.slot-team');
+        slotsFinal[slotIndex].innerText = equipo;
+        slotsFinal[slotIndex].classList.remove('empty');
+
+        if (equipoPerdedor !== '-') {
+            const slotsTercero = document.getElementById('f-tercer').querySelectorAll('.slot-team');
+            slotsTercero[slotIndex].innerText = equipoPerdedor;
+            slotsTercero[slotIndex].classList.remove('empty');
+        }
+    }
+
+    function definirPodio(elemento, rango) {
+        const equipo = elemento.innerText;
+        if (equipo === '-') return;
+
+        Array.from(elemento.parentElement.querySelectorAll('.slot-team')).forEach(s => s.classList.remove('selected'));
+        elemento.classList.add('selected');
+
+        if (rango === 'campeon') {
+            const box = document.getElementById('campeon-box');
+            box.innerText = equipo;
+            box.classList.remove('empty');
+        }
+    }
+
+    function limpiarCadenaProgreso(equipo) {
+        if (!equipo || equipo === '-') return;
+        const celdas = document.querySelectorAll('#quarter-container .slot-team, #semi-container .slot-team, #f-tercer .slot-team, #f-final .slot-team, #campeon-box');
+        celdas.forEach(c => {
+            if (c.innerText === equipo) {
+                c.innerText = '-';
+                c.classList.add('empty');
+                c.classList.remove('selected');
+            }
+        });
+    }
+
+    function ejecutarImpresion() {
+        const ahora = new Date();
+        const dia = String(ahora.getDate()).padStart(2, '0');
+        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+        const anio = ahora.getFullYear();
+        const horas = String(ahora.getHours()).padStart(2, '0');
+        const minutos = String(ahora.getMinutes()).padStart(2, '0');
+        
+        document.getElementById('print-date-el').innerText = `Predicción realizada el: ${dia}/${mes}/${anio} a las ${horas}:${minutos} hs`;
+        window.print();
+    }
+
+    function iniciarCuentaRegresiva() {
+        const fechaInaugural = new Date('June 11, 2026 18:00:00').getTime();
+
+        setInterval(() => {
+            const ahora = new Date().getTime();
+            const diferencia = fechaInaugural - ahora;
+
+            if (diferencia > 0) {
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+                document.getElementById('cd-days').innerText = String(dias).padStart(2, '0');
+                document.getElementById('cd-hours').innerText = String(horas).padStart(2, '0');
+                document.getElementById('cd-mins').innerText = String(minutos).padStart(2, '0');
+                document.getElementById('cd-secs').innerText = String(segundos).padStart(2, '0');
+            } else {
+                document.getElementById('countdown-box').innerText = "¡EL MUNDIAL HA COMENZADO!";
+            }
+        }, 1000);
+    }
+    iniciarCuentaRegresiva();
+
+    function compartirPrediccion() {
+        const estado = {
+            clasificados: clasificadosPorGrupo,
+            arbol: []
+        };
+
+        document.querySelectorAll('.slot-team, #campeon-box').forEach(slot => {
+            estado.arbol.push({
+                id: slot.id || null,
+                texto: slot.innerText,
+                selected: slot.classList.contains('selected')
+            });
+        });
+
+        const stringEstado = JSON.stringify(estado);
+        const hashBase64 = btoa(unescape(encodeURIComponent(stringEstado)));
+        const urlCompartir = window.location.origin + window.location.pathname + '?p=' + hashBase64;
+        
+        navigator.clipboard.writeText(urlCompartir).then(() => {
+            alert("¡Enlace único copiado al portapapeles! Compartilo con tus amigos.");
+        }).catch(() => {
+            alert("Copia la URL de tu barra de direcciones manualmente.");
+        });
+    }
+
+    window.onload = () => {
+        const params = new URLSearchParams(window.location.search);
+        const dataHash = params.get('p');
+        
+        if (dataHash) {
+            try {
+                const stringEstado = decodeURIComponent(escape(atob(dataHash)));
+                const estado = JSON.parse(stringEstado);
+                
+                Object.assign(clasificadosPorGrupo, estado.clasificados);
+                Object.keys(clasificadosPorGrupo).forEach(letra => {
+                    const lista = clasificadosPorGrupo[letra];
+                    lista.forEach((eq, idx) => {
+                        const fila = document.querySelector(`.team-row[data-grupo="${letra}"][data-equipo="${eq}"]`);
+                        if(fila) {
+                            fila.classList.add(idx === 0 ? 'selected-1st' : 'selected-2nd');
+                        }
+                    });
+                    actualizarNodosOctavos(letra);
+                });
+
+                const todosLosSlots = document.querySelectorAll('.slot-team, #campeon-box');
+                estado.arbol.forEach((item, index) => {
+                    if (todosLosSlots[index]) {
+                        todosLosSlots[index].innerText = item.texto;
+                        if (item.texto !== '-') todosLosSlots[index].classList.remove('empty');
+                        if (item.selected) todosLosSlots[index].classList.add('selected');
+                    }
+                });
+
+            } catch(e) {
+                console.error("Error reconstruyendo el árbol de predicciones.", e);
+            }
+        }
+    };
+</script>
+</body>
+</html>
