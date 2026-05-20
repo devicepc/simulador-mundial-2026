@@ -127,7 +127,7 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            width: 155px;
+            width: 165px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s;
@@ -160,6 +160,22 @@
         .team-row.selected-2nd { background: rgba(245, 158, 11, 0.15); color: var(--warning-accent); font-weight: bold; }
         .team-row.selected-3rd { background: rgba(168, 85, 247, 0.15); color: var(--third-accent); font-weight: bold; }
 
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .flag-img {
+            width: 18px;
+            height: 12px;
+            object-fit: cover;
+            border-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
         .badge-pos {
             font-size: 9px;
             padding: 1px 4px;
@@ -175,7 +191,7 @@
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            width: 140px;
+            width: 145px;
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
             display: flex;
@@ -198,16 +214,19 @@
             font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            text-align: center;
             transition: all 0.2s;
-            min-height: 14px;
+            min-height: 16px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 5px;
         }
         .slot-team:not(.empty):hover { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
         .slot-team.selected { background: var(--primary-accent) !important; color: white !important; }
-        .slot-team.empty { color: #475569; font-weight: normal; cursor: default; }
+        .slot-team.empty { color: #475569; font-weight: normal; cursor: default; justify-content: center; }
 
         .vs-divider {
             background: rgba(15, 23, 42, 0.2);
@@ -236,10 +255,14 @@
         .btn-share { background: var(--primary-accent); border: none; }
         .btn-share:hover { background: #1d4ed8; }
 
-        .campeon-destacado { border: 2px solid var(--success-accent) !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); width: 160px; }
+        .campeon-destacado { border: 2px solid var(--success-accent) !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); width: 170px; }
 
         @page { size: A4 portrait; margin: 4mm 4mm; }
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             .panel-instrucciones, .actions-panel, .top-header, .third-picker-counter { display: none !important; }
             .print-header { display: block !important; text-align: center; margin-bottom: 8px; border-bottom: 1.5px solid #000000; padding-bottom: 3px; width: 100%; }
             .print-header h1 { margin: 0 0 2px 0; font-size: 16px; font-weight: 800; color: #000000; text-transform: uppercase; }
@@ -248,21 +271,49 @@
             .main-content { padding: 0 !important; max-width: 100% !important; }
             .section-title { font-size: 10px !important; margin: 6px 0 3px 0 !important; color: #000000 !important; justify-content: center !important; }
             .section-title::before, .section-title::after { background: #000000 !important; width: 30px !important; }
-            .row-container { gap: 3px !important; padding: 1px 0 !important; }
-            .group-card { width: 78px !important; }
-            .match-card-vs { width: 80px !important; }
-            .group-header, .match-date-header { background: #e2e8f0 !important; color: #000000 !important; border-bottom: 1px solid #000000 !important; font-size: 7px !important; padding: 1px !important; }
-            .team-row { padding: 2px 3px !important; font-size: 7.5px !important; border-bottom: 1px solid #cbd5e1 !important; color: #000000 !important; }
-            .team-row.selected-1st { background: #d5ebd1 !important; }
-            .team-row.selected-2nd { background: #fff2cc !important; }
-            .team-row.selected-3rd { background: #f3e8ff !important; }
-            .badge-pos { display: none !important; }
-            .slot-team { padding: 2px !important; font-size: 7.5px !important; min-height: 10px !important; color: #000000 !important; }
-            .slot-team.selected { background: #cbd5e1 !important; font-weight: bold !important; }
-            .slot-team.empty { color: #94a3b8 !important; }
-            .vs-divider { color: #64748b !important; border-top: 1px dashed #000000 !important; border-bottom: 1px dashed #000000 !important; padding: 1px 0 !important; font-size: 6.5px !important; }
-            .campeon-destacado { border: 1.5px solid #000000 !important; width: 100px !important; }
-            #campeon-box { font-size: 9px !important; padding: 4px !important; }
+            .row-container { gap: 4px !important; padding: 1px 0 !important; }
+            
+            /* Ajustes de tablas de grupo */
+            .group-card { width: 92px !important; border: 1px solid #475569 !important; background: #ffffff !important;}
+            .group-header { background: #e2e8f0 !important; color: #000000 !important; border-bottom: 1px solid #475569 !important; font-size: 7px !important; padding: 2px !important; }
+            .team-row { padding: 2px 4px !important; font-size: 7.5px !important; border-bottom: 1px solid #cbd5e1 !important; color: #000000 !important; }
+            .team-row.selected-1st { background: #e2e8f0 !important; }
+            .team-row.selected-2nd { background: #f1f5f9 !important; }
+            .team-row.selected-3rd { background: #fafafa !important; }
+            
+            .badge-pos { 
+                display: inline-block !important; 
+                font-size: 7px !important; 
+                padding: 0px 2px !important; 
+                border-radius: 2px !important;
+            }
+            .selected-1st .badge-pos { background: #000000 !important; color: #ffffff !important; font-weight: bold !important; }
+            .selected-2nd .badge-pos { background: #475569 !important; color: #ffffff !important; }
+            .selected-3rd .badge-pos { background: #94a3b8 !important; color: #ffffff !important; }
+
+            /* SUPER VISIBILIDAD DE LLAVES ELIMINATORIAS EN BLANCO Y NEGRO */
+            .match-card-vs { width: 85px !important; border: 1px solid #000000 !important; background: #ffffff !important; }
+            .match-date-header { background: #e2e8f0 !important; color: #000000 !important; border-bottom: 1px solid #000000 !important; font-size: 7px !important; padding: 1px !important; }
+            
+            .slot-team { padding: 2px 3px !important; font-size: 7.5px !important; min-height: 11px !important; background: #ffffff !important; color: #000000 !important; border-bottom: none !important; }
+            /* Cuando avanza de ronda (Clasificado) -> Fondo negro con letras blancas (Máximo contraste en B&N) */
+            .slot-team.selected { 
+                background: #1e293b !important; 
+                color: #ffffff !important; 
+                font-weight: bold !important;
+                border: 1px solid #000000 !important;
+            }
+            /* Cuando el casillero está vacío o no se ha jugado */
+            .slot-team.empty { color: #94a3b8 !important; background: #f8fafc !important; justify-content: center !important; }
+            
+            .vs-divider { color: #000000 !important; background: #f1f5f9 !important; border-top: 1px dashed #000000 !important; border-bottom: 1px dashed #000000 !important; padding: 1px 0 !important; font-size: 6.5px !important; }
+            
+            /* Campeón destacado en Impresión */
+            .campeon-destacado { border: 2px solid #000000 !important; width: 110px !important; background: #ffffff !important; }
+            #campeon-box { font-size: 8.5px !important; padding: 4px 2px !important; }
+            #campeon-box:not(.empty) { background: #000000 !important; color: #ffffff !important; font-weight: bold !important; }
+
+            .flag-img { border: 1px solid #000000 !important; width: 14px !important; height: 9px !important; display: inline-block !important; }
         }
     </style>
 </head>
@@ -297,8 +348,8 @@
             • En cada grupo selecciona el **1° lugar** (primer clic), el **2° lugar** (segundo clic) y de forma opcional su **3° lugar** (tercer clic).<br>
             • Debes elegir exactamente **8 mejores terceros** de entre los 12 grupos para armar los Dieciseisavos oficiales.<br>
             • Haz clic sobre el equipo que ganará cada llave eliminatoria para avanzar automáticamente.<br>
-	    •  Si buscas una plataforma interactiva donde poner a prueba tus conocimentos de football, ver entre tus conocidos y compañeros de trabajo quien sabe o se acerca mas al resultado de la contienda.<br>
-	    •  Imprime o comaparte tu fixture <br>
+	        • Si buscas una plataforma interactiva donde poner a prueba tus conocimientos de football, ver entre tus conocidos y compañeros de trabajo quién sabe o se acerca más al resultado de la contienda.<br>
+	        • Imprime o comparte tu fixture <br>
         </div>
 
         <div class="section-title">Fase de Grupos</div>
@@ -456,11 +507,11 @@
             </div>
         </div>
 
-        <div class="section-title">Campeón del Mundo</div>
+        <div class="section-title">Campeon del Mundo</div>
         <div class="row-container">
             <div class="match-card-vs campeon-destacado">
-                <div class="match-date-header" style="background: rgba(16,185,129,0.2); color: #000000; font-weight: bold;">WORLD CHAMPION 2026</div>
-                <div class="slot-team empty" id="campeon-box" style="padding: 14px; font-size: 14px; color: #10b981;">-</div>
+                <div class="match-date-header" style="background: rgba(16,185,129,0.2); color: #10b981; font-weight: bold;">WORLD CHAMPION 2026</div>
+                <div class="slot-team empty" id="campeon-box" style="padding: 14px; font-size: 13px; color: #10b981;">-</div>
             </div>
         </div>
 
@@ -471,6 +522,21 @@
     </div>
 
 <script>
+    const datosPaises = {
+        'México': 'mx', 'Sudáfrica': 'za', 'Corea del Sur': 'kr', 'República Checa': 'cz',
+        'Canadá': 'ca', 'Bosnia-Herzegovina': 'ba', 'Qatar': 'qa', 'Suiza': 'ch',
+        'Brasil': 'br', 'Marruecos': 'ma', 'Haití': 'ht', 'Escocia': 'gb-sct',
+        'Estados Unidos': 'us', 'Paraguay': 'py', 'Australia': 'au', 'Turquía': 'tr',
+        'Alemania': 'de', 'Curazao': 'cw', 'Costa de Marfil': 'ci', 'Ecuador': 'ec',
+        'Países Bajos': 'nl', 'Japón': 'jp', 'Suecia': 'se', 'Túnez': 'tn',
+        'Bélgica': 'be', 'Egipto': 'eg', 'Irán': 'ir', 'Nueva Zelanda': 'nz',
+        'España': 'es', 'Cabo Verde': 'cv', 'Arabia Saudita': 'sa', 'Uruguay': 'uy',
+        'Francia': 'fr', 'Senegal': 'sn', 'Irak': 'iq', 'Noruega': 'no',
+        'Argentina': 'ar', 'Argelia': 'dz', 'Austria': 'at', 'Jordania': 'jo',
+        'Portugal': 'pt', 'RD Congo': 'cd', 'Uzbekistán': 'uz', 'Colombia': 'co',
+        'Inglaterra': 'gb-eng', 'Croacia': 'hr', 'Ghana': 'gh', 'Panamá': 'pa'
+    };
+
     const estructuraGrupos = {
         'A': ['México', 'Sudáfrica', 'Corea del Sur', 'República Checa'],
         'B': ['Canadá', 'Bosnia-Herzegovina', 'Qatar', 'Suiza'],
@@ -488,6 +554,20 @@
 
     const clasificadosPorGrupo = { 'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [], 'I': [], 'J': [], 'K': [], 'L': [] };
 
+    // Función auxiliar para renderizar el texto con su bandera correspondiente
+    function generarContenidoEquipo(nombreEquipo) {
+        if (!nombreEquipo || nombreEquipo === '-') return '-';
+        const iso = datosPaises[nombreEquipo] || 'un';
+        return `<img class="flag-img" src="https://flagcdn.com/w40/${iso}.png" alt="${nombreEquipo}"> <span>${nombreEquipo}</span>`;
+    }
+
+    // Extrae el texto plano aislando la bandera de un slot (para lógica de comparación)
+    function obtenerNombreDeSlot(elemento) {
+        if (elemento.classList.contains('empty') || elemento.innerText === '-') return '-';
+        const span = elemento.querySelector('span');
+        return span ? span.innerText.trim() : elemento.innerText.trim();
+    }
+
     const contenedorGrupos = document.getElementById('grupos-container');
     Object.keys(estructuraGrupos).forEach(letra => {
         const card = document.createElement('div');
@@ -499,7 +579,15 @@
             row.className = 'team-row';
             row.setAttribute('data-grupo', letra);
             row.setAttribute('data-equipo', equipo);
-            row.innerHTML = `<span>${equipo}</span><span class="badge-pos">-</span>`;
+            
+            const codigoBandera = datosPaises[equipo] || 'un'; 
+            row.innerHTML = `
+                <div class="team-info">
+                    <img class="flag-img" src="https://flagcdn.com/w40/${codigoBandera}.png" alt="${equipo}">
+                    <span>${equipo}</span>
+                </div>
+                <span class="badge-pos">-</span>`;
+                
             row.onclick = () => manejarSeleccionGrupo(row, letra, equipo);
             card.appendChild(row);
         });
@@ -569,10 +657,16 @@
             const el = document.getElementById(id);
             const data = mapeoFijo[id];
             const equipo = clasificadosPorGrupo[data[0]][data[1]];
-            const viejo = el.innerText;
-            el.innerText = equipo ? equipo : '-';
-            if(equipo) el.classList.remove('empty'); else el.classList.add('empty');
-            if(viejo !== el.innerText) limpiarCadenaProgreso(viejo);
+            const viejo = obtenerNombreDeSlot(el);
+            
+            if (equipo) {
+                el.innerHTML = generarContenidoEquipo(equipo);
+                el.classList.remove('empty');
+            } else {
+                el.innerText = '-';
+                el.classList.add('empty');
+            }
+            if(viejo !== equipo && viejo !== '-') limpiarCadenaProgreso(viejo);
         });
 
         let tercerosDisponibles = [];
@@ -595,7 +689,7 @@
 
         slotsTercerosIds.forEach(s => {
             const el = document.getElementById(s.id);
-            const viejo = el.innerText;
+            const viejo = obtenerNombreDeSlot(el);
             el.innerText = '-';
             el.classList.add('empty');
             limpiarCadenaProgreso(viejo);
@@ -609,7 +703,7 @@
             }
             if(candidato) {
                 const el = document.getElementById(slot.id);
-                el.innerText = candidato.nombre;
+                el.innerHTML = generarContenidoEquipo(candidato.nombre);
                 el.classList.remove('empty');
                 asignados.add(candidato.nombre);
             }
@@ -618,7 +712,7 @@
 
     document.querySelectorAll('#r32-container .slot-team').forEach(slot => {
         slot.onclick = function() {
-            const equipo = this.innerText;
+            const equipo = obtenerNombreDeSlot(this);
             if (equipo === '-' || this.classList.contains('empty')) return;
 
             const tarjetaPadre = this.parentElement;
@@ -631,8 +725,8 @@
             const proximaTarjeta = document.getElementById(idSiguienteTarjeta);
             const slotsSiguientes = proximaTarjeta.querySelectorAll('.slot-team');
             
-            const antiguoEnSlot = slotsSiguientes[posicionSlot].innerText;
-            slotsSiguientes[posicionSlot].innerText = equipo;
+            const antiguoEnSlot = obtenerNombreDeSlot(slotsSiguientes[posicionSlot]);
+            slotsSiguientes[posicionSlot].innerHTML = generarContenidoEquipo(equipo);
             slotsSiguientes[posicionSlot].classList.remove('empty');
 
             if(antiguoEnSlot !== equipo && antiguoEnSlot !== '-') {
@@ -642,7 +736,7 @@
     });
 
     function promover(elemento) {
-        const equipo = elemento.innerText;
+        const equipo = obtenerNombreDeSlot(elemento);
         if (equipo === '-' || elemento.classList.contains('empty')) return;
 
         const tarjetaPadre = elemento.parentElement;
@@ -655,8 +749,8 @@
         const proximaTarjeta = document.getElementById(idSiguienteTarjeta);
         const slotsSiguientes = proximaTarjeta.querySelectorAll('.slot-team');
         
-        const antiguoEnSlot = slotsSiguientes[posicionSlot].innerText;
-        slotsSiguientes[posicionSlot].innerText = equipo;
+        const antiguoEnSlot = obtenerNombreDeSlot(slotsSiguientes[posicionSlot]);
+        slotsSiguientes[posicionSlot].innerHTML = generarContenidoEquipo(equipo);
         slotsSiguientes[posicionSlot].classList.remove('empty');
 
         if(antiguoEnSlot !== equipo && antiguoEnSlot !== '-') {
@@ -665,13 +759,13 @@
     }
 
     function promoverSemi(elemento) {
-        const equipo = elemento.innerText;
+        const equipo = obtenerNombreDeSlot(elemento);
         if (equipo === '-' || elemento.classList.contains('empty')) return;
 
         const tarjetaPadre = elemento.parentElement;
         const hermanos = Array.from(tarjetaPadre.querySelectorAll('.slot-team'));
         const elOtroSlot = hermanos.find(s => s !== elemento);
-        const equipoPerdedor = elOtroSlot.innerText;
+        const equipoPerdedor = obtenerNombreDeSlot(elOtroSlot);
 
         hermanos.forEach(s => s.classList.remove('selected'));
         elemento.classList.add('selected');
@@ -679,18 +773,18 @@
         const slotIndex = (tarjetaPadre.id === 's0') ? 0 : 1;
 
         const slotsFinal = document.getElementById('f-final').querySelectorAll('.slot-team');
-        slotsFinal[slotIndex].innerText = equipo;
+        slotsFinal[slotIndex].innerHTML = generarContenidoEquipo(equipo);
         slotsFinal[slotIndex].classList.remove('empty');
 
         if (equipoPerdedor !== '-') {
             const slotsTercero = document.getElementById('f-tercer').querySelectorAll('.slot-team');
-            slotsTercero[slotIndex].innerText = equipoPerdedor;
+            slotsTercero[slotIndex].innerHTML = generarContenidoEquipo(equipoPerdedor);
             slotsTercero[slotIndex].classList.remove('empty');
         }
     }
 
     function definirPodio(elemento, rango) {
-        const equipo = elemento.innerText;
+        const equipo = obtenerNombreDeSlot(elemento);
         if (equipo === '-' || elemento.classList.contains('empty')) return;
 
         Array.from(elemento.parentElement.querySelectorAll('.slot-team')).forEach(s => s.classList.remove('selected'));
@@ -698,16 +792,16 @@
 
         if (rango === 'campeon') {
             const box = document.getElementById('campeon-box');
-            box.innerText = equipo;
+            box.innerHTML = generarContenidoEquipo(equipo);
             box.classList.remove('empty');
         }
     }
 
     function limpiarCadenaProgreso(equipo) {
         if (!equipo || equipo === '-') return;
-        const celdas = document.querySelectorAll('#r16-container .slot-team, #quarter-container .slot-team, #semi-container .slot-team, #f-tercer .slot-team, #f-final .slot-team, #campeon-box');
+        const celdas = document.querySelectorAll('.slot-team, #campeon-box');
         celdas.forEach(c => {
-            if (c.innerText === equipo) {
+            if (obtenerNombreDeSlot(c) === equipo) {
                 c.innerText = '-';
                 c.classList.add('empty');
                 c.classList.remove('selected');
@@ -754,7 +848,7 @@
         document.querySelectorAll('.slot-team, #campeon-box').forEach(slot => {
             estado.arbol.push({
                 id: slot.id || null,
-                texto: slot.innerText,
+                texto: obtenerNombreDeSlot(slot),
                 selected: slot.classList.contains('selected')
             });
         });
@@ -785,17 +879,22 @@
                             if(idx === 0) fila.classList.add('selected-1st');
                             if(idx === 1) fila.classList.add('selected-2nd');
                             if(idx === 2) fila.classList.add('selected-3rd');
+                            fila.querySelector('.badge-pos').innerText = `${idx + 1}°`;
                         }
                     });
                 });
                 document.getElementById('thirds-count').innerText = obtenerTotalTerceros();
-                actualizarTableroCompleto();
 
                 const todosLosSlots = document.querySelectorAll('.slot-team, #campeon-box');
                 estado.arbol.forEach((item, index) => {
                     if (todosLosSlots[index]) {
-                        todosLosSlots[index].innerText = item.texto;
-                        if (item.texto !== '-') todosLosSlots[index].classList.remove('empty');
+                        if (item.texto !== '-') {
+                            todosLosSlots[index].innerHTML = generarContenidoEquipo(item.texto);
+                            todosLosSlots[index].classList.remove('empty');
+                        } else {
+                            todosLosSlots[index].innerText = '-';
+                            todosLosSlots[index].classList.add('empty');
+                        }
                         if (item.selected) todosLosSlots[index].classList.add('selected');
                     }
                 });
